@@ -1,62 +1,39 @@
-const serverUrl = 'http://localhost:4000/';
+const serverUrl = 'http://localhost:3000/';
 const itemsPath = 'items/';
 const imagesPath = 'img/';
 
-require('dotenv').config();
+window.onload = getData();
 
-// BB.DD
-mongoose.connect(process.env.DB_URL, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-const db = mongoose.connection;
-db.on('error', (error) => console.error(error));
-db.once('open', () => console.log('Conectado a BB.DD'));
+const items = document.querySelector('.items');
 
-// Import Routes
-const itemsRoutes = require('./routes/items');
-const imgRoutes = require('./routes/img');
-const paymentsIntentRoutes = require('./routes/paymentsIntent');
-const ordersRoutes = require('./routes/orders');
+function getData() {
+  fetch(`${serverUrl}${itemsPath}`)
+    .then((res) => res.json())
+    .then((data) => printData(data));
+}
 
-// MIDDLEWARE
-app.use(cors());
-app.use(express.json());
+function printData(data) {
+  const itemContainer = document.createElement('div');
+  itemContainer.className = 'row';
 
-app.use('/items', itemsRoutes);
-app.use('/img', imgRoutes);
-app.use('/create-payment-intent', paymentsIntentRoutes);
-app.use('/order', ordersRoutes);
+  data.forEach((item) => {
+    itemContainer.innerHTML += createDomElement(item);
+    items.append(itemContainer);
+  });
+}
 
-// Rutas
-app.get('/', (req, res) => {
-  res.send('HOME!');
-});
+function createDomElement(item) {
+  const itemHtml = `
+    <div class="col-12 col-md-6">
+        <div class="item shadow mb-4" data-id=${item._id}>
+            <h3 class="item-title">${item.title}</h3>
+            <img class="item-image" src=${serverUrl}${imagesPath}${item.image}>
 
-// Start
-//app.listen(3000);
-
-const PORT = process.env.PORT || 4000
-app.listen(PORT, function() {
-
-	console.log("Servidor escuchando en el puerto", PORT)
-
-})
-
-
-const http = require("http");
-
-require("dotenv").config();
-
-let port = process.env.PORT;
-let host = process.env.HOST;
-
-let server = http.createServer((req, res) => {
-  console.log("Thanks for the request");
-  res.writeHead(200, { "Content-Type": "text/plain" });
-  res.end("You Rock");
-});
-
-server.listen(port, host, () => {
-  console.log(`Server is listening ${host}:${port}`);
-});
+            <div class="item-details">
+                <h4 class="item-price">${item.price}mxn</h4>
+                <button class="item-button btn btn-primary addToCart">AÑADIR AL CARRITO</button>
+            </div>
+        </div>
+    </div>`;
+  return itemHtml;
+}

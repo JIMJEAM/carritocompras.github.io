@@ -4,6 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 require('dotenv').config();
+const cors = requiere('cors');
 
 // BB.DD
 mongoose.connect(process.env.DB_URL, {
