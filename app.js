@@ -4,6 +4,7 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 require('dotenv').config();
+const cors = requiere('cors');
 
 // BB.DD
 mongoose.connect(process.env.DB_URL, {
@@ -37,14 +38,27 @@ app.get('/', (req, res) => {
 // Start
 //app.listen(3000);
 
-//const PORT = process.env.PORT || 4000
-//app.listen(PORT, function() {
+const PORT = process.env.PORT || 3000
+app.listen(PORT, function() {
 
-//	console.log("Servidor escuchando en el puerto", PORT)
+	console.log("Servidor escuchando en el puerto", PORT)
 
-//})
+})
 
-var port = process.env.PORT || 3000;
 
-app.listen(port);
+const http = require("http");
 
+require("dotenv").config();
+
+let port = process.env.PORT;
+let host = process.env.HOST;
+
+let server = http.createServer((req, res) => {
+  console.log("Thanks for the request");
+  res.writeHead(200, { "Content-Type": "text/plain" });
+  res.end("You Rock");
+});
+
+server.listen(port, host, () => {
+  console.log(`Server is listening ${host}:${port}`);
+});
